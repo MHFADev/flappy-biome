@@ -1,0 +1,68 @@
+# ACT AS: SENIOR FRONTEND ENGINEER & GAME ARCHITECT
+
+**Project:** "Flappy Biome: Vector Cataclysm"
+**Deployment Target:** Vercel.
+**Database Host:** Railway (PostgreSQL).
+**Stack:**
+- **Framework:** Next.js 14+ (App Router).
+- **Styling:** Tailwind CSS.
+- **Rendering:** Hybrid Engine (HTML5 Canvas for World/Obstacles + React SVG Components for Player).
+- **Backend:** Next.js API Routes + Prisma ORM.
+
+**Objective:**
+Build a responsive, complex, side-scrolling survival game.
+Key distinction: **The Player Skins must be individual SVG Components**, not image URLs.
+The game features Biomes, RPG Buffs, Extreme Difficulty tiers, and a Segmented Leaderboard stored in Railway.
+
+## 1. SKIN SYSTEM (SVG ARCHITECTURE)
+Do NOT use external image URLs for the player.
+Create a folder `components/skins/`. Inside, create 5 distinct, creative SVG components (Export them as React Components):
+1.  `SkinCute.js`: A round, kawaii hamster or blob (Theme: Funny).
+2.  `SkinCyber.js`: A sleek, neon drone (Theme: Cool).
+3.  `SkinFantasy.js`: A mini dragon with wings (Theme: Fantasy).
+4.  `SkinGlitch.js`: A pixelated/distorted shape (Theme: Masochist).
+5.  `SkinUFO.js`: A classic saucer.
+*Constraint:* Each SVG must accept `className` or `style` props to handle rotation physics during gameplay.
+
+## 2. DATABASE & LEADERBOARD (Railway + Prisma)
+- **Schema (`prisma/schema.prisma`):**
+  - Model `Score`: `id`, `username`, `score`, `difficulty` (Enum), `skinUsed` (String), `createdAt`.
+  - Add standard indexing for performance.
+- **API:**
+  - `GET /api/leaderboard`: Accepts `?difficulty=HARD`. Returns top 20.
+  - `POST /api/score`: Validates and saves the run.
+- **UI:** Implement a Tabbed Leaderboard (Easy | Normal | Hard | ... | Masochist).
+
+## 3. GAMEPLAY MECHANICS (The Loop)
+- **Biomes (Visuals & Hazards):**
+  - *Forest:* Green SVG color palette, simple Pipes.
+  - *Ice:* Blue palette, **Ice Spikes** (Triangular SVG hazards falling), Reduced friction physics.
+  - *Magma:* Red palette, **Moving Fire Pillars**, Gravity increased by 10%.
+  - *Void (Cyber):* Dark palette, **Lasers** (Intermittent beams), **Homing Rockets**.
+- **Difficulty Tiers:**
+  - *Easy/Normal/Hard:* Standard progression.
+  - *Insane:* Rockets enabled.
+  - *Expert:* Tiny gaps.
+  - *Masochist:*
+    - **Invisible Mode:** Obstacles have `opacity: 0` until they are 150px from player.
+    - **Screen Shake:** Apply CSS animation to the main container.
+
+## 4. BUFFS (Power-ups)
+Spawn generic SVG Icons (Shield, Clock, Star) randomly.
+- **Shield:** Ignores 1 collision.
+- **Time Slow:** Game speed 0.5x for 5 seconds.
+- **Multiplier:** Score counts 2x.
+
+## 5. DELIVERABLES (FILE STRUCTURE)
+Provide the complete, Copy-Paste ready code for:
+
+1.  **`prisma/schema.prisma`**: Optimized for Railway Postgres.
+2.  **`lib/prisma.js`**: Singleton client.
+3.  **`components/skins/index.js`**: An export file managing the skin selection logic.
+4.  **`components/skins/SkinDragon.js`** (Example of complex SVG code).
+5.  **`lib/gameEngine.js`**: Physics logic (Collision detection between SVG Player bounding box and Canvas obstacles).
+6.  **`app/api/leaderboard/route.js`**: The backend logic.
+7.  **`components/GameContainer.js`**: The main component connecting State, Canvas, and SVG Player.
+8.  **`app/page.js`**: Main Menu with **Skin Selector Carousel** (Previewing the SVGs) and Difficulty Tabs.
+
+**Start coding. Ensure the SVG skins are high quality (using paths/circles/gradients) and the Vercel deployment config is standard.**
