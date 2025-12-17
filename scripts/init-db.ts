@@ -1,28 +1,17 @@
-import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import * as schema from "@shared/schema";
 
 const { Pool } = pg;
 
 const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+  console.error("DATABASE_URL must be set");
+  process.exit(1);
 }
 
-export const pool = new Pool({ connectionString: databaseUrl });
-export const db = drizzle(pool, { schema });
+const pool = new Pool({ connectionString: databaseUrl });
 
-let isInitialized = false;
-
-export async function initializeDatabase(): Promise<void> {
-  if (isInitialized) {
-    console.log("Database already initialized, skipping...");
-    return;
-  }
-
+async function initializeDatabase(): Promise<void> {
   console.log("Initializing database...");
 
   try {
@@ -92,10 +81,21 @@ export async function initializeDatabase(): Promise<void> {
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_gacha_history_player ON gacha_history(player_id)`);
     console.log("Gacha indexes created or already exist.");
 
-    isInitialized = true;
     console.log("Database initialization completed successfully.");
   } catch (error) {
     console.error("Error initializing database:", error);
     throw error;
+  } finally {
+    await pool.end();
   }
 }
+
+initializeDatabase()
+  .then(() => {
+    console.log("Done!");
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error("Failed:", error);
+    process.exit(1);
+  });

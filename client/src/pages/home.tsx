@@ -96,8 +96,8 @@ export default function Home() {
 
   // Handle game end and add coins
   const handleGameEnd = async (score: number) => {
-    // Award coins based on score (15 coins per point)
-    const coinsEarned = Math.floor(score * 15);
+    // Award coins based on score (1 coin per point)
+    const coinsEarned = Math.floor(score * 20);
     if (coinsEarned > 0 && playerName) {
       try {
         await apiRequest("POST", `/api/player/${playerName}/coins`, { amount: coinsEarned });
@@ -143,7 +143,7 @@ export default function Home() {
             className="mb-4"
             data-testid="button-back-menu"
           >
-            Back to Menu
+            «— Back to Menu
           </Button>
           <Leaderboard initialDifficulty={selectedDifficulty} />
         </div>
@@ -428,7 +428,7 @@ export default function Home() {
               Score points to earn coins. Use coins in the Gacha to unlock 85+ unique skins!
             </p>
             <p className="text-xs text-muted-foreground mt-2">
-              15 coins per point scored
+              1.5 coins per point scored
             </p>
           </CardContent>
         </Card>
