@@ -79,14 +79,26 @@ Preferred communication style: Simple, everyday language.
 ### Replit Deployment (Recommended)
 Use Replit's built-in publishing feature for seamless deployment of both frontend and backend.
 
-### Vercel Deployment
-A `vercel.json` configuration is provided for deploying the frontend as a static site:
-- The frontend is built using `npm run build` and outputs to `dist/public`
-- For API functionality, you'll need to either:
-  1. Host the Express backend separately (Railway, Render, etc.)
-  2. Use Replit's deployment for the full-stack experience
+### Vercel Deployment (Full-Stack)
+The project is configured for full-stack deployment on Vercel with serverless API functions:
 
-Note: Vercel's serverless functions have limitations with Express apps. For a production fullstack deployment, Replit's native deployment or platforms like Railway/Render are recommended.
+**Configuration:**
+- `vercel.json` - Routes API requests to serverless function, serves static frontend
+- `api/index.ts` - Serverless API handler using Neon's HTTP driver for database access
+
+**Setup Steps:**
+1. Connect your Vercel project to this repository
+2. Add the `DATABASE_URL` environment variable in Vercel's dashboard (use a Neon PostgreSQL connection string)
+3. Deploy - the frontend builds to `dist/public` and API routes are handled by `api/index.ts`
+
+**Database:**
+- Local development uses `node-postgres` (pg) for standard PostgreSQL connections
+- Vercel production uses `@neondatabase/serverless` with HTTP driver for serverless-compatible connections
+- Both share the same Neon PostgreSQL database via `DATABASE_URL`
+
+**API Routes in Vercel:**
+- All `/api/*` requests are routed to the serverless function
+- The function handles all game API endpoints (leaderboard, scores, player, gacha)
 
 ## Recent Changes
 
